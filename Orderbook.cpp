@@ -50,12 +50,13 @@ class Order
 
 public:
 	Order(OrderType orderType, OrderId orderId, Side side, Price price, Quantity quantity)
-		: orderType { orderType }
-		, orderId { orderId }
-		, side { side }
-		, price { price }
-		, initialQuantity { quantity }
-		, remainingQuantity { quantity }
+		: orderType_ { orderType }
+		, orderId_ { orderId }
+		, side_ { side }
+		, price_ { price }
+		, initialQuantity_ { quantity }
+		, remainingQuantity_ { quantity }
+	{ }
 	
 	OrderId GetOrderId() const { return orderId_;}
 	Side GetSide() const { return side_;}
@@ -69,7 +70,7 @@ public:
 		if (quantity > GetRemainingQuantity())
 			throw std::logic_error(std::format("Order ({}) cannot be filled for more than its remaining quantity!", GetOrderId()));
 		
-		remainingQuantity -= quantity;
+		remainingQuantity_ -= quantity;
 	}
 
 private:
@@ -80,7 +81,37 @@ private:
 	Quantity initialQuantity_;
 	Quantity remainingQuantity_;
 
-}
+};
+
+using OrderPointer = std::shared_ptr<Order>;
+using OrderPointers = std::list<OrderPointer>;
+
+class OrderModify
+{
+public:
+	OrderModify(OrderId orderId, Side side, Price price, Quantity quantity)
+		: orderId_ {orderId}
+		, price_ {price}
+		, side_ {side}
+		, quantity_ {quantity}
+	{ }
+
+	OrderId GetOrderId() const { return orderId_;}
+	Side GetSide() const { return side_;}
+	Price GetPrice() const { return price_;}
+	Quantity GetQuantity() const { return quantity_;}
+
+	OrderPointer ToOrderPointer(OrderType type) const 
+	{
+		return std::make_shared<Order>(type, GetOrderId(), GetSide(), GetPrice(), GetQuantity());
+	}
+
+private:
+	OrderId orderId_;
+	Side side_;
+	Price price_;
+	Quantity quantity_;
+};
 
 int main()
 {
