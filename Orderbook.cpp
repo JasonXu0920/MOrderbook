@@ -138,6 +138,22 @@ private:
 
 using Trades = std::vector<Trade>;
 
+class Orderbook
+{
+private:
+	struct OrderEntry
+	{
+		OrderPointer order_ {nullptr};
+		OrderPointer::iterator location_;
+	};
+
+	std::map<Price, OrderPointers, std::greater<Price>> bids_;
+	std::map<Price, OrderPointers, std::less<Price>> asks_;
+	std::unordered_map<OrderId, OrderEntry> orders_;
+	
+	
+}
+
 int main()
 {
 	return 0;
