@@ -1,25 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <string>
+#include "Orderbook.h"
 
-
-
-
-enum class OrderType
-{
-    GoodTillCancel,
-    FillAndKill
-};
-
-enum class Side
-{
-    Buy,
-    Sell
-};
-
-using Price = std::int32_t;
-using Quantity = std::uint32_t;
-using OrderId = std::uint64_t;
+#include <numeric>
+#include <chrono>
+#include <ctime>
 
 struct LevelInfo
 {
@@ -307,7 +290,7 @@ public:
 		auto CreateLevelInfos = [](Price price, const OrderPointer& orders)
 		{
 			return LevelInfo { price, std::accumulate(orders.begin(), orders.end(), (Quantity)0, 
-				[](std::size_t runningSum, const OrderPointer& order)
+				[](Quantity runningSum, const OrderPointer& order)
 				{ return runningSum + order->GetRemainingQuantity(); }
 			)};
 		}
